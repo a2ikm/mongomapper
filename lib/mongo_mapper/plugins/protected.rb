@@ -39,7 +39,12 @@ module MongoMapper
 
       def filter_protected_attrs(attrs)
         return attrs if protected_attributes.blank? || attrs.blank?
-        attrs.dup.delete_if { |key, val| protected_attributes.include?(key.to_sym) }
+        attrs.dup.delete_if { |key, val| protected_attributes.include?(key.to_sym) }.tap do |new_attrs|
+          if attrs.count > new_attrs.count
+            keys = attrs.keys.map(&:to_sym) - new_attrs.keys.map(&:to_sym)
+            MongoMapper.logger.warn "WARNING: Can’t mass-assign protected attributes: #{keys.join(", ")}"
+          end
+        end
       end
     end
   end
