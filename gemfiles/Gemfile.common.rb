@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'bson', '4.9.5'
+gem 'bson', '4.8.2'
 
 gem 'rake', "< 11.0"
 gem 'multi_json',  '~> 1.2'
