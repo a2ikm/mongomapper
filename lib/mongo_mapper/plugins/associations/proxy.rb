@@ -45,8 +45,7 @@ module MongoMapper
         end
 
         def inspect
-          load_target
-          target.inspect
+          "ProxyObject"
         end
 
         def loaded?
