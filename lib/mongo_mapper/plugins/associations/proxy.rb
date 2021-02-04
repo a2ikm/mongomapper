@@ -8,6 +8,9 @@ module MongoMapper
 
         alias :proxy_respond_to? :respond_to?
         alias :proxy_extend :extend
+        alias proxy_instance_variables instance_variables
+        alias proxy_instance_variable_get instance_variable_get
+        alias proxy_instance_variable_set instance_variable_set
 
         instance_methods.each { |m| undef_method m unless m =~ /(^__|^nil\?$|^send$|proxy_|^respond_to_missing\?$|^object_id$)/ }
 
