@@ -24,7 +24,6 @@ module MongoMapper
     include Plugins::Persistence
     include Plugins::Accessible
     include Plugins::Protected
-    include Plugins::Rails
 
     included do
       extend Plugins
