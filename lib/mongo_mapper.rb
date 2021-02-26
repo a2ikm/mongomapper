@@ -26,5 +26,3 @@ end
 Dir[File.join(File.dirname(__FILE__), 'mongo_mapper', 'extensions', '*.rb')].each do |extension|
   require extension
 end
-
-ActiveSupport.run_load_hooks(:mongo_mapper, MongoMapper)
