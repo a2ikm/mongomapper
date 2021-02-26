@@ -28,7 +28,6 @@ module MongoMapper
     autoload :ActiveModel,        'mongo_mapper/plugins/active_model'
     autoload :Associations,       'mongo_mapper/plugins/associations'
     autoload :Document,           'mongo_mapper/plugins/document'
-    autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 
     module Associations
