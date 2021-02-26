@@ -32,7 +32,6 @@ module MongoMapper
     include Plugins::Stats
     include Plugins::Timestamps
     include Plugins::Userstamps
-    include Plugins::Validations
 
     included do
       extend Plugins
