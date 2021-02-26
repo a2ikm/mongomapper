@@ -30,7 +30,6 @@ module MongoMapper
                  "Accessors called `#{@name}` have been created instead."
           end
           @ivar = :"@#{name}" if valid_ruby_name?
-          validate_key_name! unless dynamic? or !any_accessor?
         end
 
         def persisted_name
@@ -128,14 +127,6 @@ module MongoMapper
 
         def typecast_class
           @typecast_class ||= options[:typecast].constantize
-        end
-
-        def validate_key_name!
-          if reserved_name?
-            raise MongoMapper::InvalidKey.new("`#{@name}` is a reserved key name")
-          elsif !valid_ruby_name?
-            raise MongoMapper::InvalidKey.new("`#{@name}` is not a valid key name. Keys must match [a-z][a-z0-9_]*")
-          end
         end
       end
     end
