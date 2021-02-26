@@ -9,7 +9,6 @@ module MongoMapper
 
     included do
       extend Plugins
-      extend Translation
     end
   end # Document
 end # MongoMapper
