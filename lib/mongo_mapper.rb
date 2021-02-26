@@ -54,7 +54,6 @@ module MongoMapper
     autoload :Stats,              'mongo_mapper/plugins/stats'
     autoload :StrongParameters,   'mongo_mapper/plugins/strong_parameters'
     autoload :Timestamps,         'mongo_mapper/plugins/timestamps'
-    autoload :Userstamps,         'mongo_mapper/plugins/userstamps'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
