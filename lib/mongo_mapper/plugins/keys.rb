@@ -62,34 +62,6 @@ module MongoMapper
         end
 
         def create_accessors_for(key)
-          if key.read_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}
-                read_key(:#{key.name})
-              end
-
-              def #{key.name}_before_type_cast
-                read_key_before_type_cast(:#{key.name})
-              end
-            end_eval
-          end
-
-          if key.write_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}=(value)
-                write_key(:#{key.name}, value)
-              end
-            end_eval
-          end
-
-          if key.predicate_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}?
-                read_key(:#{key.name}).present?
-              end
-            end_eval
-          end
-
           if block_given?
             accessors_module.module_eval do
               yield
