@@ -56,7 +56,6 @@ module MongoMapper
 
       def initialize(attrs={})
         @_new = true
-        init_ivars
         self.attributes = attrs
         yield self if block_given?
       end
@@ -135,19 +134,14 @@ module MongoMapper
 
     private
 
-      def init_ivars
-        @__mm_keys = self.class.keys                                # Not dumpable
-      end
-
       # This exists to be patched over by plugins, while letting us still get to the undecorated
       # version of the method.
       def write_key(name, value)
-        init_ivars unless @__mm_keys
         internal_write_key(name.to_s, value)
       end
 
       def internal_write_key(name, value, cast = true)
-        key         = @__mm_keys[name]
+        key         = self.class.keys[name]
         as_mongo    = cast ? key.set(value) : value
         as_typecast = key.get(as_mongo)
         if key.ivar
