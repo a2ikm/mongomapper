@@ -1,5 +1,4 @@
 # encoding: UTF-8
-require File.expand_path('../lib/mongo_mapper/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name               = 'mongo_mapper'
@@ -11,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors            = ['John Nunemaker', 'Chris Heald', 'Scott Taylor']
   s.email              = ['nunemaker@gmail.com', 'cheald@gmail.com', 'scott@railsnewbie.com']
   s.executables        = ['mmconsole']
-  s.version            = MongoMapper::Version
+  s.version            = "0.15.3"
   s.platform           = Gem::Platform::RUBY
   s.files              = Dir.glob("{bin,examples,lib,spec}/**/*") + %w[LICENSE UPGRADES README.md]
 

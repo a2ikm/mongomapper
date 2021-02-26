@@ -13,8 +13,6 @@ module MongoMapper
   autoload :InvalidKey,             'mongo_mapper/exceptions'
   autoload :NotSupported,           'mongo_mapper/exceptions'
 
-  autoload :Version,                'mongo_mapper/version'
-
   module Plugins
     autoload :Keys,               'mongo_mapper/plugins/keys'
   end
