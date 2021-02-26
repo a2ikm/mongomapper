@@ -5,7 +5,6 @@ module MongoMapper
     extend Plugins
 
     include Plugins::ActiveModel
-    include Plugins::Document
     include Plugins::Associations
     include Plugins::Keys
 
