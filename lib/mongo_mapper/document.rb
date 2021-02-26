@@ -15,7 +15,6 @@ module MongoMapper
     include Plugins::Inspect
     include Plugins::Indexes
     include Plugins::Keys
-    include Plugins::Keys::Static
 
     included do
       extend Plugins
