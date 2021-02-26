@@ -10,7 +10,6 @@ module MongoMapper
     include Plugins::Associations
     include Plugins::Caching
     include Plugins::Clone
-    include Plugins::DynamicQuerying
     include Plugins::Keys
 
     included do

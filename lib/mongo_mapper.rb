@@ -30,7 +30,6 @@ module MongoMapper
     autoload :Caching,            'mongo_mapper/plugins/caching'
     autoload :Clone,              'mongo_mapper/plugins/clone'
     autoload :Document,           'mongo_mapper/plugins/document'
-    autoload :DynamicQuerying,    'mongo_mapper/plugins/dynamic_querying'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
     autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
     autoload :Keys,               'mongo_mapper/plugins/keys'
