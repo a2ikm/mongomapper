@@ -43,7 +43,7 @@ module MongoMapper
         return if attrs == nil || attrs.blank?
 
         attrs.each_pair do |key, value|
-          self[key] = value
+          write_key(key, value)
         end
       end
 
@@ -73,10 +73,6 @@ module MongoMapper
 
       def [](key_name); read_key(key_name); end
       def attribute(key_name); read_key(key_name); end
-
-      def []=(name, value)
-        write_key(name, value)
-      end
 
     private
 
