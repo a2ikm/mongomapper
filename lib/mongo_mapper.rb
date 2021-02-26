@@ -27,7 +27,6 @@ module MongoMapper
   module Plugins
     autoload :ActiveModel,        'mongo_mapper/plugins/active_model'
     autoload :Associations,       'mongo_mapper/plugins/associations'
-    autoload :Accessible,         'mongo_mapper/plugins/accessible'
     autoload :Caching,            'mongo_mapper/plugins/caching'
     autoload :Clone,              'mongo_mapper/plugins/clone'
     autoload :Dirty,              'mongo_mapper/plugins/dirty'
