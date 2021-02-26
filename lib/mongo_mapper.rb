@@ -41,7 +41,6 @@ module MongoMapper
     autoload :Keys,               'mongo_mapper/plugins/keys'
     autoload :Logger,             'mongo_mapper/plugins/logger'
     autoload :Modifiers,          'mongo_mapper/plugins/modifiers'
-    autoload :Pagination,         'mongo_mapper/plugins/pagination'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
