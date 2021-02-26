@@ -22,8 +22,12 @@ module MongoMapper
       end
 
       def initialize(attrs={})
-        attrs.each_pair do |key, value|
-          write_key(key, value)
+        attrs.each_pair do |name, value|
+          key         = self.class.keys[name.to_s]
+          as_mongo    = key.set(value)
+          as_typecast = key.get(as_mongo)
+          instance_variable_set key.ivar, as_typecast
+          value
         end
       end
 
@@ -44,18 +48,6 @@ module MongoMapper
             instance_variable_set key.ivar, key.get(nil)
           end
         end
-      end
-
-    private
-
-      # This exists to be patched over by plugins, while letting us still get to the undecorated
-      # version of the method.
-      def write_key(name, value)
-        key         = self.class.keys[name.to_s]
-        as_mongo    = key.set(value)
-        as_typecast = key.get(as_mongo)
-        instance_variable_set key.ivar, as_typecast
-        value
       end
     end
   end
