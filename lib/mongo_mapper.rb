@@ -34,7 +34,6 @@ module MongoMapper
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
     autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
     autoload :Equality,           'mongo_mapper/plugins/equality'
-    autoload :IdentityMap,        'mongo_mapper/plugins/identity_map'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 
     module Associations
