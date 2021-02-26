@@ -15,10 +15,6 @@ module MongoMapper
             keys[key.name] = key
           end
         end
-
-        def key?(key)
-          keys.key? key.to_s
-        end
       end
 
       def initialize(attrs={})
