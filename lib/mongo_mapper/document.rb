@@ -34,7 +34,6 @@ module MongoMapper
     include Plugins::Userstamps
     include Plugins::Validations
     include Plugins::EmbeddedCallbacks
-    include Plugins::Callbacks # for now callbacks needs to be after validations
 
     included do
       extend Plugins
