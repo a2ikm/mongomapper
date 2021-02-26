@@ -25,7 +25,6 @@ module MongoMapper
   autoload :Utils,                  'mongo_mapper/utils'
 
   module Plugins
-    autoload :ActiveModel,        'mongo_mapper/plugins/active_model'
     autoload :Associations,       'mongo_mapper/plugins/associations'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 

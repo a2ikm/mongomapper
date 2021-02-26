@@ -4,7 +4,6 @@ module MongoMapper
     extend ActiveSupport::Concern
     extend Plugins
 
-    include Plugins::ActiveModel
     include Plugins::Associations
     include Plugins::Keys
 
