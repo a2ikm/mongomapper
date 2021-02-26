@@ -158,16 +158,6 @@ module MongoMapper
               attrs[include_abbreviatons && key.persisted_name || name] = key.set(value)
             end
           end
-
-          embedded_associations.each do |association|
-            if documents = instance_variable_get(association.ivar)
-              if association.is_a?(Associations::OneAssociation)
-                attrs[association.name] = documents.to_mongo
-              else
-                attrs[association.name] = documents.map(&:to_mongo)
-              end
-            end
-          end
         end
       end
 
@@ -227,14 +217,6 @@ module MongoMapper
         @key_names ||= keys.keys
       end
 
-      def non_embedded_keys
-        @non_embedded_keys ||= keys.values.select { |key| !key.embeddable? }
-      end
-
-      def embedded_keys
-        @embedded_keys ||= keys.values.select(&:embeddable?)
-      end
-
     protected
 
       def unalias_key(name)
@@ -266,12 +248,6 @@ module MongoMapper
         end
       end
 
-      def set_parent_document(key, value)
-        if key.type and value.instance_of?(key.type) && key.embeddable? && value.respond_to?(:_parent_document)
-          value._parent_document = self
-        end
-      end
-
       # This exists to be patched over by plugins, while letting us still get to the undecorated
       # version of the method.
       def write_key(name, value)
@@ -284,10 +260,6 @@ module MongoMapper
         as_mongo    = cast ? key.set(value) : value
         as_typecast = key.get(as_mongo)
         if key.ivar
-          if key.embeddable?
-            set_parent_document(key, value)
-            set_parent_document(key, as_typecast)
-          end
           instance_variable_set key.ivar, as_typecast
         else
           @_dynamic_attributes[key.name.to_sym] = as_typecast

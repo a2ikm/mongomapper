@@ -12,7 +12,6 @@ module MongoMapper
           @name, @type = args.shift.to_s, args.shift
           self.options = (options_from_args || {}).symbolize_keys
           @dynamic     = !!options[:__dynamic]
-          @embeddable  = type.respond_to?(:embeddable?) ? type.embeddable? : false
           @typecast    = @options[:typecast]
           @accessors   = Array(@options[:accessors]).compact.map &:to_s
           @has_default  = !!options.key?(:default)
