@@ -53,9 +53,6 @@ module MongoMapper
         end
       end
 
-      def [](key_name); read_key(key_name); end
-      def attribute(key_name); read_key(key_name); end
-
     private
 
       # This exists to be patched over by plugins, while letting us still get to the undecorated
