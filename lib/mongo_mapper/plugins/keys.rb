@@ -105,21 +105,6 @@ module MongoMapper
         self.attributes = attrs
       end
 
-      def update_attributes(attrs={})
-        self.attributes = attrs
-        save
-      end
-
-      def update_attributes!(attrs={})
-        self.attributes = attrs
-        save!
-      end
-
-      def update_attribute(name, value)
-        self.send(:"#{name}=", value)
-        save(:validate => false)
-      end
-
       def keys
         self.class.keys
       end
