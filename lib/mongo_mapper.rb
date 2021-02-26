@@ -48,7 +48,6 @@ module MongoMapper
     autoload :Querying,           'mongo_mapper/plugins/querying'
     autoload :Rails,              'mongo_mapper/plugins/rails'
     autoload :Safe,               'mongo_mapper/plugins/safe'
-    autoload :Sci,                'mongo_mapper/plugins/sci'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
