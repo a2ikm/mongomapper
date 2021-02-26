@@ -38,11 +38,6 @@ module MongoMapper
         to_mongo(false).with_indifferent_access
       end
 
-      def assign(attrs={})
-        warn "[DEPRECATION] #assign is deprecated, use #attributes="
-        self.attributes = attrs
-      end
-
       def keys
         self.class.keys
       end
