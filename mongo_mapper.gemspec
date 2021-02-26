@@ -20,7 +20,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activesupport', '>= 5.0'
   s.add_dependency 'activemodel',   ">= 5.0"
-  s.add_dependency 'activemodel-serializers-xml', "~> 1.0"
-
-  s.add_dependency 'rexml'
 end
