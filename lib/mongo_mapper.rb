@@ -52,7 +52,6 @@ module MongoMapper
     autoload :Scopes,             'mongo_mapper/plugins/scopes'
     autoload :Serialization,      'mongo_mapper/plugins/serialization'
     autoload :Stats,              'mongo_mapper/plugins/stats'
-    autoload :StrongParameters,   'mongo_mapper/plugins/strong_parameters'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
