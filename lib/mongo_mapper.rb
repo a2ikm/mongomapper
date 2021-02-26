@@ -36,7 +36,6 @@ module MongoMapper
     autoload :Equality,           'mongo_mapper/plugins/equality'
     autoload :IdentityMap,        'mongo_mapper/plugins/identity_map'
     autoload :Inspect,            'mongo_mapper/plugins/inspect'
-    autoload :Indexes,            'mongo_mapper/plugins/indexes'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 
     module Associations

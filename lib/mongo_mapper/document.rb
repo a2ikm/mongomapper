@@ -13,7 +13,6 @@ module MongoMapper
     include Plugins::DynamicQuerying
     include Plugins::Equality
     include Plugins::Inspect
-    include Plugins::Indexes
     include Plugins::Keys
 
     included do
