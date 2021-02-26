@@ -66,9 +66,7 @@ module MongoMapper
           if key.ivar && instance_variable_defined?(key.ivar)
             value = instance_variable_get(key.ivar)
           else
-            if key.ivar
-              instance_variable_set key.ivar, key.get(nil)
-            end
+            instance_variable_set key.ivar, key.get(nil)
           end
         end
       end
