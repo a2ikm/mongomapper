@@ -22,7 +22,6 @@ module MongoMapper
     include Plugins::Pagination
     include Plugins::Persistence
     include Plugins::Accessible
-    include Plugins::Protected
 
     included do
       extend Plugins
