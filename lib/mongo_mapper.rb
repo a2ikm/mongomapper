@@ -20,7 +20,6 @@ module MongoMapper
   autoload :NotSupported,           'mongo_mapper/exceptions'
 
   autoload :Document,               'mongo_mapper/document'
-  autoload :EmbeddedDocument,       'mongo_mapper/embedded_document'
   autoload :Plugins,                'mongo_mapper/plugins'
   autoload :Translation,            'mongo_mapper/translation'
   autoload :Version,                'mongo_mapper/version'
