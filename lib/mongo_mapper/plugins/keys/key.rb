@@ -5,12 +5,11 @@ module MongoMapper
       class Key
         RESERVED_KEYS = %w( class object_id attributes )
 
-        attr_accessor :name, :type, :options, :ivar
+        attr_accessor :name, :type, :ivar
 
         def initialize(*args)
-          options_from_args = args.extract_options!
+          args.extract_options!
           @name, @type = args.shift.to_s, args.shift
-          self.options = (options_from_args || {}).symbolize_keys
 
           @ivar = :"@#{name}" if valid_ruby_name?
         end
