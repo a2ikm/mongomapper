@@ -5,7 +5,7 @@ module MongoMapper
       class Key
         RESERVED_KEYS = %w( class object_id attributes )
 
-        attr_accessor :name, :type, :options, :default, :ivar, :abbr, :accessors
+        attr_accessor :name, :type, :options, :default, :ivar, :accessors
 
         def initialize(*args)
           options_from_args = args.extract_options!
@@ -18,24 +18,15 @@ module MongoMapper
           @has_default  = !!options.key?(:default)
           self.default = self.options[:default] if default?
 
-          if abbr = @options[:abbr] || @options[:alias] || @options[:field_name]
-            @abbr = abbr.to_s
-          elsif @name.match(/^[A-Z]/) and !dynamic?
-            @abbr = @name
-            @name = @name.gsub(/^([A-Z])/) {|m| m.downcase }
-            Kernel.warn "Key names may not start with uppercase letters. If your field starts " +
-                 "with an uppercase letter, use :field_name to specify the real field name. " +
-                 "Accessors called `#{@name}` have been created instead."
-          end
           @ivar = :"@#{name}" if valid_ruby_name?
         end
 
         def persisted_name
-          @abbr || @name
+          @name
         end
 
         def ==(other)
-          @name == other.name && @type == other.type && @abbr == other.abbr
+          @name == other.name && @type == other.type
         end
 
         def embeddable?

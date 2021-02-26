@@ -22,53 +22,12 @@ module MongoMapper
           @keys ||= {}
         end
 
-        def dynamic_keys
-          @dynamic_keys ||= Hash[*unaliased_keys.select {|k, v| v.dynamic? }.flatten(1)]
-        end
-
-        def defined_keys
-          @defined_keys ||= Hash[*unaliased_keys.select {|k, v| !v.dynamic? }.flatten(1)]
-        end
-
-        def unaliased_keys
-          @unaliased_keys ||= Hash[*keys.select {|k, v| k == v.name }.flatten(1)]
-        end
-
-        def dealias_keys(hash)
-          out = {}
-          hash.each do |k, v|
-            key = keys[k.to_s]
-            name = key && key.abbr || k
-            out[name] = k.to_s.match(/^\$/) && v.is_a?(Hash) ? dealias_keys(v) : v
-          end
-          out
-        end
-
-        def dealias_key(name)
-          key = keys[name.to_s]
-          key && key.abbr || k
-        end
-
-        alias_method :dealias, :dealias_keys
-        alias_method :unalias, :dealias_keys
-
         def key(*args)
           Key.new(*args).tap do |key|
             keys[key.name] = key
-            keys[key.abbr] = key if key.abbr
             create_accessors_for(key) if key.valid_ruby_name? && !key.reserved_name?
-            @dynamic_keys = @defined_keys = @unaliased_keys = @object_id_keys = nil
           end
         end
-
-        def persisted_name(name)
-          if key = keys[name.to_s]
-            key.persisted_name
-          else
-            name
-          end
-        end
-        alias_method :abbr, :persisted_name
 
         def key?(key)
           keys.key? key.to_s
