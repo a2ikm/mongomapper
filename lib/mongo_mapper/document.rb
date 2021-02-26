@@ -9,7 +9,6 @@ module MongoMapper
     include Plugins::Dumpable
     include Plugins::Associations
     include Plugins::Caching
-    include Plugins::Clone
     include Plugins::Keys
 
     included do

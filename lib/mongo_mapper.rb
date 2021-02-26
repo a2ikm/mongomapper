@@ -28,7 +28,6 @@ module MongoMapper
     autoload :ActiveModel,        'mongo_mapper/plugins/active_model'
     autoload :Associations,       'mongo_mapper/plugins/associations'
     autoload :Caching,            'mongo_mapper/plugins/caching'
-    autoload :Clone,              'mongo_mapper/plugins/clone'
     autoload :Document,           'mongo_mapper/plugins/document'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
     autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
