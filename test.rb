@@ -15,9 +15,13 @@ class Answer
 end
 
 class BugTest < Minitest::Test
-  def test_to_json
+  def test_to_json_object
     answer = Answer.new
-    json = [answer].to_json
-    assert_equal "42", JSON.parse(json)[0]["body"]
+    assert_equal '{"body":"42"}', answer.to_json
+  end
+
+  def test_to_json_object_in_array
+    answer = Answer.new
+    assert_equal '[{"body":"42"}]', [answer].to_json
   end
 end
