@@ -29,7 +29,6 @@ module MongoMapper
     include Plugins::Sci
     include Plugins::Scopes
     include Plugins::Serialization
-    include Plugins::Stats
 
     included do
       extend Plugins
