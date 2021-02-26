@@ -11,7 +11,6 @@ module MongoMapper
           options_from_args = args.extract_options!
           @name, @type = args.shift.to_s, args.shift
           self.options = (options_from_args || {}).symbolize_keys
-          @typecast    = @options[:typecast]
           @accessors   = Array(@options[:accessors]).compact.map &:to_s
 
           @ivar = :"@#{name}" if valid_ruby_name?
@@ -32,27 +31,12 @@ module MongoMapper
         def get(value)
           value = type ? type.from_mongo(value) : value
 
-          if @typecast
-            klass = typecast_class # Don't make this lookup on every call
-            # typecast assumes array-ish object.
-            value = value.map { |v| klass.from_mongo(v) }
-            # recast it in the original type
-            value = type.from_mongo(value)
-          end
-
           value
         end
 
         def set(value)
           # Avoid tap here so we don't have to create a block binding.
-          value = type ? type.to_mongo(value) : value.to_mongo
-
-          if @typecast
-            klass = typecast_class  # Don't make this lookup on every call
-            value.map { |v| klass.to_mongo(v) }
-          else
-            value
-          end
+          type ? type.to_mongo(value) : value.to_mongo
         end
 
         def valid_ruby_name?
@@ -79,12 +63,6 @@ module MongoMapper
           return true if @accessors.empty?
           return false unless (@accessors & ["skip", "none"]).empty?
           return !(@accessors & arr_opt).empty?
-        end
-
-      private
-
-        def typecast_class
-          @typecast_class ||= options[:typecast].constantize
         end
       end
     end
