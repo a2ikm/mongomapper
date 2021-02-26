@@ -99,10 +99,6 @@ module MongoMapper
         write_key(name, value)
       end
 
-      def key_names
-        @key_names ||= keys.keys
-      end
-
     private
 
       # This exists to be patched over by plugins, while letting us still get to the undecorated
