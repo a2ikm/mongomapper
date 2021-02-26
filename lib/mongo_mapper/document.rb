@@ -28,7 +28,6 @@ module MongoMapper
     include Plugins::Safe # needs to be after querying (save_to_collection)
     include Plugins::Sci
     include Plugins::Scopes
-    include Plugins::Serialization
 
     included do
       extend Plugins
