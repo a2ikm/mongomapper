@@ -88,9 +88,9 @@ module MongoMapper
         internal_write_key(name.to_s, value)
       end
 
-      def internal_write_key(name, value, cast = true)
+      def internal_write_key(name, value)
         key         = self.class.keys[name]
-        as_mongo    = cast ? key.set(value) : value
+        as_mongo    = true ? key.set(value) : value
         as_typecast = key.get(as_mongo)
         if key.ivar
           instance_variable_set key.ivar, as_typecast
