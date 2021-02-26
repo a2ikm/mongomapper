@@ -22,13 +22,6 @@ module MongoMapper
       end
 
       def initialize(attrs={})
-        self.attributes = attrs
-        yield self if block_given?
-      end
-
-      def attributes=(attrs)
-        return if attrs == nil || attrs.blank?
-
         attrs.each_pair do |key, value|
           write_key(key, value)
         end
