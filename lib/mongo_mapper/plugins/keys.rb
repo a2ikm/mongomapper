@@ -8,16 +8,7 @@ module MongoMapper
 
       IS_RUBY_1_9 = method(:const_defined?).arity == 1
 
-      included do
-        extend ActiveSupport::DescendantsTracker
-      end
-
       module ClassMethods
-        def inherited(descendant)
-          descendant.instance_variable_set(:@keys, keys.dup)
-          super
-        end
-
         def keys
           @keys ||= {}
         end
