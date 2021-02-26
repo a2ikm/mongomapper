@@ -6,8 +6,7 @@ gemfile(false) do
 end
 
 require "minitest/autorun"
-require "active_support"
-require "active_support/core_ext"
+require "active_support/json/encoding"
 
 class Answer
   def initialize
