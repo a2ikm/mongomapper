@@ -85,12 +85,8 @@ module MongoMapper
       # This exists to be patched over by plugins, while letting us still get to the undecorated
       # version of the method.
       def write_key(name, value)
-        internal_write_key(name.to_s, value)
-      end
-
-      def internal_write_key(name, value)
-        key         = self.class.keys[name]
-        as_mongo    = true ? key.set(value) : value
+        key         = self.class.keys[name.to_s]
+        as_mongo    = key.set(value)
         as_typecast = key.get(as_mongo)
         instance_variable_set key.ivar, as_typecast
         value
