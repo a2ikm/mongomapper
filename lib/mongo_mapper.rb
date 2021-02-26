@@ -47,7 +47,6 @@ module MongoMapper
     autoload :Protected,          'mongo_mapper/plugins/protected'
     autoload :Querying,           'mongo_mapper/plugins/querying'
     autoload :Rails,              'mongo_mapper/plugins/rails'
-    autoload :Safe,               'mongo_mapper/plugins/safe'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'

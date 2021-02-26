@@ -25,7 +25,6 @@ module MongoMapper
     include Plugins::Accessible
     include Plugins::Protected
     include Plugins::Rails
-    include Plugins::Safe # needs to be after querying (save_to_collection)
 
     included do
       extend Plugins
