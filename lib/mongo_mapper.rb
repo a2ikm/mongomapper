@@ -4,8 +4,6 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'active_model'
 
-I18n.load_path << File.expand_path('../mongo_mapper/locale/en.yml', __FILE__)
-
 module MongoMapper
   autoload :Error,                  'mongo_mapper/exceptions'
   autoload :DocumentNotFound,       'mongo_mapper/exceptions'
