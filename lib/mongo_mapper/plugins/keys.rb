@@ -22,13 +22,8 @@ module MongoMapper
       end
 
       def initialize(attrs={})
-        @_new = true
         self.attributes = attrs
         yield self if block_given?
-      end
-
-      def persisted?
-        !new? && !destroyed?
       end
 
       def attributes=(attrs)
