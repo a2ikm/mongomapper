@@ -91,18 +91,6 @@ module MongoMapper
           keys.key? key.to_s
         end
 
-        def using_object_id?
-          object_id_key?(:_id)
-        end
-
-        def object_id_keys
-          @object_id_keys ||= unaliased_keys.keys.select { |key| keys[key].type == ObjectId }.map(&:to_sym)
-        end
-
-        def object_id_key?(name)
-          object_id_keys.include?(name.to_sym)
-        end
-
         def to_mongo(instance)
           instance && instance.to_mongo
         end
@@ -303,7 +291,7 @@ module MongoMapper
         Hash.new.tap do |attrs|
           self.class.unaliased_keys.each do |name, key|
             value = self.read_key(key.name)
-            if key.type == ObjectId || !value.nil?
+            if !value.nil?
               attrs[include_abbreviatons && key.persisted_name || name] = key.set(value)
             end
           end
@@ -342,18 +330,6 @@ module MongoMapper
       def update_attribute(name, value)
         self.send(:"#{name}=", value)
         save(:validate => false)
-      end
-
-      def id
-        self[:_id]
-      end
-
-      def id=(value)
-        if self.class.using_object_id?
-          value = ObjectId.to_mongo(value)
-        end
-
-        self[:_id] = value
       end
 
       def keys
