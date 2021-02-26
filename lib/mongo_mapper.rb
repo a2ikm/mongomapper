@@ -29,7 +29,6 @@ module MongoMapper
     autoload :Associations,       'mongo_mapper/plugins/associations'
     autoload :Caching,            'mongo_mapper/plugins/caching'
     autoload :Clone,              'mongo_mapper/plugins/clone'
-    autoload :Dirty,              'mongo_mapper/plugins/dirty'
     autoload :Document,           'mongo_mapper/plugins/document'
     autoload :DynamicQuerying,    'mongo_mapper/plugins/dynamic_querying'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
