@@ -16,7 +16,6 @@ module MongoMapper
   autoload :NotSupported,           'mongo_mapper/exceptions'
 
   autoload :Document,               'mongo_mapper/document'
-  autoload :Plugins,                'mongo_mapper/plugins'
   autoload :Version,                'mongo_mapper/version'
   autoload :Utils,                  'mongo_mapper/utils'
 
