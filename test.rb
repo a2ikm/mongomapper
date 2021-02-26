@@ -2,8 +2,6 @@ require "bundler/inline"
 
 gemfile(false) do
   source "https://rubygems.org"
-  gem "mongo", "~> 2.0"
-  gem "plucky", "~> 0.8.0"
   gem "activesupport", "~> #{ENV.fetch("RAILS_VERSION")}"
   gem "activemodel", "~> #{ENV.fetch("RAILS_VERSION")}"
 end
