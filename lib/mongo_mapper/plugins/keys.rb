@@ -5,9 +5,6 @@ module MongoMapper
   module Plugins
     module Keys
       extend ActiveSupport::Concern
-
-      IS_RUBY_1_9 = method(:const_defined?).arity == 1
-
       module ClassMethods
         def keys
           @keys ||= {}
@@ -35,13 +32,7 @@ module MongoMapper
       private
 
         def key_accessors_module_defined?
-          # :nocov:
-          if IS_RUBY_1_9
-            const_defined?('MongoMapperKeys')
-          else
-            const_defined?('MongoMapperKeys', false)
-          end
-          # :nocov:
+          const_defined?('MongoMapperKeys', false)
         end
 
         def accessors_module
