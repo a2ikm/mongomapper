@@ -4,7 +4,6 @@ module MongoMapper
     module Keys
       class Key
         RESERVED_KEYS = %w( class object_id attributes )
-        ID_STR = '_id'
 
         attr_accessor :name, :type, :options, :default, :ivar, :abbr, :accessors
 
@@ -14,7 +13,6 @@ module MongoMapper
           self.options = (options_from_args || {}).symbolize_keys
           @dynamic     = !!options[:__dynamic]
           @embeddable  = type.respond_to?(:embeddable?) ? type.embeddable? : false
-          @is_id       = @name == ID_STR
           @typecast    = @options[:typecast]
           @accessors   = Array(@options[:accessors]).compact.map &:to_s
           @has_default  = !!options.key?(:default)
@@ -57,9 +55,6 @@ module MongoMapper
         end
 
         def get(value)
-          # Special Case: Generate default _id on access
-          value = default_value if @is_id and !value
-
           value = type ? type.from_mongo(value) : value
 
           if @typecast
