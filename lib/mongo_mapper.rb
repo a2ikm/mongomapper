@@ -20,7 +20,3 @@ module MongoMapper
     autoload :Keys,               'mongo_mapper/plugins/keys'
   end
 end
-
-Dir[File.join(File.dirname(__FILE__), 'mongo_mapper', 'extensions', '*.rb')].each do |extension|
-  require extension
-end

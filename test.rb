@@ -8,6 +8,16 @@ end
 
 require "minitest/autorun"
 
+class String
+  def self.to_mongo(value)
+    value && value.to_s
+  end
+
+  def self.from_mongo(value)
+    value && value.to_s
+  end
+end
+
 class Answer
   include MongoMapper::Document
 
