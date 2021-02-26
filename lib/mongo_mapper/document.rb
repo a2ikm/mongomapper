@@ -33,7 +33,6 @@ module MongoMapper
     include Plugins::Timestamps
     include Plugins::Userstamps
     include Plugins::Validations
-    include Plugins::EmbeddedCallbacks
 
     included do
       extend Plugins

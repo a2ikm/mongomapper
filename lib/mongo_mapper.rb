@@ -34,7 +34,6 @@ module MongoMapper
     autoload :Document,           'mongo_mapper/plugins/document'
     autoload :DynamicQuerying,    'mongo_mapper/plugins/dynamic_querying'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
-    autoload :EmbeddedCallbacks,  'mongo_mapper/plugins/embedded_callbacks'
     autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
     autoload :Equality,           'mongo_mapper/plugins/equality'
     autoload :IdentityMap,        'mongo_mapper/plugins/identity_map'
