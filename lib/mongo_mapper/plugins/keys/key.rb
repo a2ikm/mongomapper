@@ -3,8 +3,6 @@ module MongoMapper
   module Plugins
     module Keys
       class Key
-        RESERVED_KEYS = %w( class object_id attributes )
-
         attr_accessor :name, :type, :ivar
 
         def initialize(*args)
