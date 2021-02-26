@@ -20,7 +20,6 @@ module MongoMapper
     include Plugins::Logger
     include Plugins::Modifiers
     include Plugins::Pagination
-    include Plugins::Persistence
 
     included do
       extend Plugins
