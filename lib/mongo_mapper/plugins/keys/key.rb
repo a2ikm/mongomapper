@@ -32,10 +32,6 @@ module MongoMapper
           # Avoid tap here so we don't have to create a block binding.
           type ? type.to_mongo(value) : value.to_mongo
         end
-
-        def reserved_name?
-          RESERVED_KEYS.include?(@name)
-        end
       end
     end
   end
