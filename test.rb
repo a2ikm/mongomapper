@@ -3,13 +3,11 @@ require "bundler/inline"
 gemfile(false) do
   source "https://rubygems.org"
   gem "activesupport", "~> #{ENV.fetch("RAILS_VERSION")}"
-  gem "activemodel", "~> #{ENV.fetch("RAILS_VERSION")}"
 end
 
 require "minitest/autorun"
 require "active_support"
 require "active_support/core_ext"
-require "active_model"
 
 class Key
   attr_accessor :name, :type, :ivar
