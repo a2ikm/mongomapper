@@ -8,7 +8,6 @@ module MongoMapper
         attr_accessor :name, :type, :ivar
 
         def initialize(*args)
-          args.extract_options!
           @name, @type = args.shift.to_s, args.shift
 
           @ivar = :"@#{name}"
