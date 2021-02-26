@@ -133,17 +133,6 @@ module MongoMapper
         @key_names ||= keys.keys
       end
 
-    protected
-
-      def unalias_key(name)
-        name = name.to_s
-        if key = keys[name]
-          key.name
-        else
-          name
-        end
-      end
-
     private
 
       def init_ivars
