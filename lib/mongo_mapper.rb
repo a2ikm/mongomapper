@@ -29,7 +29,6 @@ module MongoMapper
     autoload :Associations,       'mongo_mapper/plugins/associations'
     autoload :Document,           'mongo_mapper/plugins/document'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
-    autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 
     module Associations
