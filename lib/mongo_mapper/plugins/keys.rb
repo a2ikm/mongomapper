@@ -113,7 +113,6 @@ module MongoMapper
       def initialize(attrs={})
         @_new = true
         init_ivars
-        initialize_default_values(attrs)
         self.attributes = attrs
         yield self if block_given?
       end
@@ -121,7 +120,6 @@ module MongoMapper
       def initialize_from_database(attrs={}, with_cast = false)
         @_new = false
         init_ivars
-        initialize_default_values(attrs)
         load_from_database(attrs, with_cast)
         self
       end
@@ -228,7 +226,6 @@ module MongoMapper
 
       def init_ivars
         @__mm_keys = self.class.keys                                # Not dumpable
-        @__mm_default_keys = @__mm_keys.values.select(&:default?)   # Not dumpable
       end
 
       def load_from_database(attrs, with_cast = false)
@@ -258,14 +255,6 @@ module MongoMapper
           instance_variable_set key.ivar, as_typecast
         end
         value
-      end
-
-      def initialize_default_values(except = {})
-        @__mm_default_keys.each do |key|
-          if !(except && except.key?(key.name))
-            internal_write_key key.name, key.default_value, false
-          end
-        end
       end
     end
   end

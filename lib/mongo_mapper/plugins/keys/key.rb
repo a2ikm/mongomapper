@@ -5,7 +5,7 @@ module MongoMapper
       class Key
         RESERVED_KEYS = %w( class object_id attributes )
 
-        attr_accessor :name, :type, :options, :default, :ivar, :accessors
+        attr_accessor :name, :type, :options, :ivar, :accessors
 
         def initialize(*args)
           options_from_args = args.extract_options!
@@ -13,8 +13,6 @@ module MongoMapper
           self.options = (options_from_args || {}).symbolize_keys
           @typecast    = @options[:typecast]
           @accessors   = Array(@options[:accessors]).compact.map &:to_s
-          @has_default  = !!options.key?(:default)
-          self.default = self.options[:default] if default?
 
           @ivar = :"@#{name}" if valid_ruby_name?
         end
@@ -29,10 +27,6 @@ module MongoMapper
 
         def number?
           type == Integer || type == Float
-        end
-
-        def default?
-          @has_default
         end
 
         def get(value)
@@ -58,18 +52,6 @@ module MongoMapper
             value.map { |v| klass.to_mongo(v) }
           else
             value
-          end
-        end
-
-        def default_value
-          return unless default?
-
-          if default.instance_of? Proc
-            default.call
-          else
-            # Using Marshal is easiest way to get a copy of mutable objects
-            # without getting an error on immutable objects
-            Marshal.load(Marshal.dump(default))
           end
         end
 
