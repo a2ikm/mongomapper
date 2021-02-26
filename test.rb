@@ -2,10 +2,15 @@ require "bundler/inline"
 
 gemfile(false) do
   source "https://rubygems.org"
-  gemspec :path => './'
-  gem "rails", "~> #{ENV.fetch("RAILS_VERSION")}"
+  gem "mongo", "~> 2.0"
+  gem "plucky", "~> 0.8.0"
+  gem "activesupport", "~> #{ENV.fetch("RAILS_VERSION")}"
+  gem "activemodel", "~> #{ENV.fetch("RAILS_VERSION")}"
 end
 
+$LOAD_PATH.unshift(File.expand_path("../lib", __FILE__))
+
+require "mongo_mapper"
 require "minitest/autorun"
 
 class String
