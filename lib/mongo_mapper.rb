@@ -7,8 +7,6 @@ require 'active_model'
 I18n.load_path << File.expand_path('../mongo_mapper/locale/en.yml', __FILE__)
 
 module MongoMapper
-  autoload :Connection,             'mongo_mapper/connection'
-
   autoload :Error,                  'mongo_mapper/exceptions'
   autoload :DocumentNotFound,       'mongo_mapper/exceptions'
   autoload :InvalidScheme,          'mongo_mapper/exceptions'
@@ -52,8 +50,6 @@ module MongoMapper
       autoload :InForeignArrayProxy,          'mongo_mapper/plugins/associations/proxy/in_foreign_array_proxy'
     end
   end
-
-  extend Connection
 end
 
 Dir[File.join(File.dirname(__FILE__), 'mongo_mapper', 'extensions', '*.rb')].each do |extension|
