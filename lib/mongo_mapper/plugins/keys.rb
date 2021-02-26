@@ -31,23 +31,8 @@ module MongoMapper
         end
       end
 
-      def attributes
-        to_mongo(false).with_indifferent_access
-      end
-
       def keys
         self.class.keys
-      end
-
-      def read_key(key_name)
-        key_name_sym = key_name.to_sym
-        if key = keys[key_name.to_s]
-          if key.ivar && instance_variable_defined?(key.ivar)
-            value = instance_variable_get(key.ivar)
-          else
-            instance_variable_set key.ivar, key.get(nil)
-          end
-        end
       end
     end
   end
