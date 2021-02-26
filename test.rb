@@ -11,7 +11,7 @@ require "active_support/core_ext"
 
 class Answer
   def initialize
-    instance_variable_set(:"@body", "42")
+    @body = "42"
   end
 end
 
