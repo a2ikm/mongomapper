@@ -22,10 +22,6 @@ module MongoMapper
           @name == other.name && @type == other.type
         end
 
-        def number?
-          type == Integer || type == Float
-        end
-
         def get(value)
           value = type ? type.from_mongo(value) : value
 
