@@ -47,17 +47,6 @@ module MongoMapper
         end
       end
 
-      def to_mongo(include_abbreviatons = true)
-        Hash.new.tap do |attrs|
-          self.class.unaliased_keys.each do |name, key|
-            value = self.read_key(key.name)
-            if !value.nil?
-              attrs[include_abbreviatons && key.persisted_name || name] = key.set(value)
-            end
-          end
-        end
-      end
-
       def attributes
         to_mongo(false).with_indifferent_access
       end
