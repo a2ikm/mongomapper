@@ -19,7 +19,7 @@ class String
 end
 
 class Answer
-  include MongoMapper::Document
+  include MongoMapper::Plugins::Keys
 
   key :body, String
 end
