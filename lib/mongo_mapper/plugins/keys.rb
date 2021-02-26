@@ -41,16 +41,6 @@ module MongoMapper
           value && (value.instance_of?(self) ? value : load(value))
         end
 
-        # load is overridden in identity map to ensure same objects are loaded
-        def load(attrs, with_cast = false)
-          return nil if attrs.nil?
-          begin
-            attrs['_type'] ? attrs['_type'].constantize : self
-          rescue NameError
-            self
-          end.allocate.initialize_from_database(attrs, with_cast)
-        end
-
       private
 
         def key_accessors_module_defined?
@@ -115,13 +105,6 @@ module MongoMapper
         init_ivars
         self.attributes = attrs
         yield self if block_given?
-      end
-
-      def initialize_from_database(attrs={}, with_cast = false)
-        @_new = false
-        init_ivars
-        load_from_database(attrs, with_cast)
-        self
       end
 
       def persisted?
@@ -226,18 +209,6 @@ module MongoMapper
 
       def init_ivars
         @__mm_keys = self.class.keys                                # Not dumpable
-      end
-
-      def load_from_database(attrs, with_cast = false)
-        return if attrs == nil || attrs.blank?
-
-        attrs.each do |key, value|
-          if !@__mm_keys.key?(key) && respond_to?(:"#{key}=")
-            self.send(:"#{key}=", value)
-          else
-            internal_write_key key, value, with_cast
-          end
-        end
       end
 
       # This exists to be patched over by plugins, while letting us still get to the undecorated
