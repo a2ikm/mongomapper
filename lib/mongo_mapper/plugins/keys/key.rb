@@ -13,10 +13,6 @@ module MongoMapper
           @ivar = :"@#{name}"
         end
 
-        def persisted_name
-          @name
-        end
-
         def ==(other)
           @name == other.name && @type == other.type
         end
