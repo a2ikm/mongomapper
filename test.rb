@@ -11,30 +11,6 @@ require "active_support"
 require "active_support/core_ext"
 require "active_model"
 
-module Keys
-  extend ActiveSupport::Concern
-  module ClassMethods
-    def keys
-      @keys ||= {}
-    end
-
-    def key(*args)
-      Key.new(*args).tap do |key|
-        keys[key.name] = key
-      end
-    end
-  end
-
-  def initialize(attrs={})
-    attrs.each_pair do |name, value|
-      key         = self.class.keys[name.to_s]
-      as_mongo    = key.set(value)
-      as_typecast = key.get(as_mongo)
-      instance_variable_set key.ivar, as_typecast
-    end
-  end
-end
-
 class Key
   attr_accessor :name, :type, :ivar
 
@@ -67,9 +43,28 @@ class String
 end
 
 class Answer
-  include Keys
+  def self.keys
+    @keys ||= {}
+  end
+
+  def self.key(*args)
+    Key.new(*args).tap do |key|
+      keys[key.name] = key
+    end
+  end
 
   key :body, String
+
+
+
+  def initialize(attrs={})
+    attrs.each_pair do |name, value|
+      key         = self.class.keys[name.to_s]
+      as_mongo    = key.set(value)
+      as_typecast = key.get(as_mongo)
+      instance_variable_set key.ivar, as_typecast
+    end
+  end
 end
 
 class BugTest < Minitest::Test
