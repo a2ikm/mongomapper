@@ -49,7 +49,6 @@ module MongoMapper
     autoload :Rails,              'mongo_mapper/plugins/rails'
     autoload :Safe,               'mongo_mapper/plugins/safe'
     autoload :Sci,                'mongo_mapper/plugins/sci'
-    autoload :Scopes,             'mongo_mapper/plugins/scopes'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
