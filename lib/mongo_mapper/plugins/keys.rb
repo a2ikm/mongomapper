@@ -30,10 +30,6 @@ module MongoMapper
           value
         end
       end
-
-      def keys
-        self.class.keys
-      end
     end
   end
 end
