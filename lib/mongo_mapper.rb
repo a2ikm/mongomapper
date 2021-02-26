@@ -39,7 +39,6 @@ module MongoMapper
     autoload :Inspect,            'mongo_mapper/plugins/inspect'
     autoload :Indexes,            'mongo_mapper/plugins/indexes'
     autoload :Keys,               'mongo_mapper/plugins/keys'
-    autoload :Logger,             'mongo_mapper/plugins/logger'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
