@@ -13,7 +13,6 @@ module MongoMapper
         def key(*args)
           Key.new(*args).tap do |key|
             keys[key.name] = key
-            create_accessors_for(key) if key.valid_ruby_name? && !key.reserved_name?
           end
         end
 
@@ -27,30 +26,6 @@ module MongoMapper
 
         def from_mongo(value)
           value && (value.instance_of?(self) ? value : load(value))
-        end
-
-      private
-
-        def key_accessors_module_defined?
-          const_defined?('MongoMapperKeys', false)
-        end
-
-        def accessors_module
-          if key_accessors_module_defined?
-            const_get 'MongoMapperKeys'
-          else
-            const_set 'MongoMapperKeys', Module.new
-          end
-        end
-
-        def create_accessors_for(key)
-          if block_given?
-            accessors_module.module_eval do
-              yield
-            end
-          end
-
-          include accessors_module
         end
       end
 
@@ -68,11 +43,7 @@ module MongoMapper
         return if attrs == nil || attrs.blank?
 
         attrs.each_pair do |key, value|
-          if respond_to?(:"#{key}=")
-            self.send(:"#{key}=", value)
-          else
-            self[key] = value
-          end
+          self[key] = value
         end
       end
 
