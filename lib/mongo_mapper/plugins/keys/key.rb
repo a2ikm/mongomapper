@@ -3,7 +3,7 @@ module MongoMapper
   module Plugins
     module Keys
       class Key
-        RESERVED_KEYS = %w( id class object_id attributes )
+        RESERVED_KEYS = %w( class object_id attributes )
         ID_STR = '_id'
 
         attr_accessor :name, :type, :options, :default, :ivar, :abbr, :accessors

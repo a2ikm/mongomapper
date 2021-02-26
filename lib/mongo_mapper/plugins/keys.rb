@@ -10,7 +10,6 @@ module MongoMapper
 
       included do
         extend ActiveSupport::DescendantsTracker
-        key :_id, ObjectId, :default => lambda { BSON::ObjectId.new }
       end
 
       module ClassMethods
