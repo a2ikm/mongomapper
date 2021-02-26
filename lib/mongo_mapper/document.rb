@@ -36,7 +36,6 @@ module MongoMapper
     include Plugins::Validations
     include Plugins::EmbeddedCallbacks
     include Plugins::Callbacks # for now callbacks needs to be after validations
-    include Plugins::PartialUpdates
 
     included do
       extend Plugins
