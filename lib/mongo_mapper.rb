@@ -40,7 +40,6 @@ module MongoMapper
     autoload :Indexes,            'mongo_mapper/plugins/indexes'
     autoload :Keys,               'mongo_mapper/plugins/keys'
     autoload :Logger,             'mongo_mapper/plugins/logger'
-    autoload :Modifiers,          'mongo_mapper/plugins/modifiers'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'

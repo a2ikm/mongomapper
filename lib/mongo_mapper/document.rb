@@ -18,7 +18,6 @@ module MongoMapper
     include Plugins::Keys::Static
     include Plugins::Dirty # for now dirty needs to be after keys
     include Plugins::Logger
-    include Plugins::Modifiers
 
     included do
       extend Plugins
