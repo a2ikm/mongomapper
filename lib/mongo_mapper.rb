@@ -17,7 +17,6 @@ module MongoMapper
 
   autoload :Document,               'mongo_mapper/document'
   autoload :Version,                'mongo_mapper/version'
-  autoload :Utils,                  'mongo_mapper/utils'
 
   module Plugins
     autoload :Associations,       'mongo_mapper/plugins/associations'
