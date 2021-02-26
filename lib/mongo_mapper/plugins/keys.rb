@@ -27,7 +27,6 @@ module MongoMapper
           as_mongo    = key.set(value)
           as_typecast = key.get(as_mongo)
           instance_variable_set key.ivar, as_typecast
-          value
         end
       end
     end
