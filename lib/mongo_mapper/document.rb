@@ -12,7 +12,6 @@ module MongoMapper
     include Plugins::Clone
     include Plugins::DynamicQuerying
     include Plugins::Equality
-    include Plugins::Inspect
     include Plugins::Keys
 
     included do
