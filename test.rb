@@ -1,8 +1,8 @@
 require "bundler/inline"
 
-gemfile(false) do
+gemfile(true) do
   source "https://rubygems.org"
-  gem "activesupport", "~> #{ENV.fetch("RAILS_VERSION")}"
+  gem "activesupport", ENV.fetch("AS_VERSION")
 end
 
 require "minitest/autorun"
