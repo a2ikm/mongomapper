@@ -11,7 +11,6 @@ module MongoMapper
           options_from_args = args.extract_options!
           @name, @type = args.shift.to_s, args.shift
           self.options = (options_from_args || {}).symbolize_keys
-          @dynamic     = !!options[:__dynamic]
           @typecast    = @options[:typecast]
           @accessors   = Array(@options[:accessors]).compact.map &:to_s
           @has_default  = !!options.key?(:default)
@@ -28,20 +27,12 @@ module MongoMapper
           @name == other.name && @type == other.type
         end
 
-        def embeddable?
-          @embeddable
-        end
-
         def number?
           type == Integer || type == Float
         end
 
         def default?
           @has_default
-        end
-
-        def dynamic?
-          @dynamic
         end
 
         def get(value)

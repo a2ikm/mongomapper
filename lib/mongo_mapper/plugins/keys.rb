@@ -191,16 +191,12 @@ module MongoMapper
 
       def read_key(key_name)
         key_name_sym = key_name.to_sym
-        if @_dynamic_attributes && @_dynamic_attributes.key?(key_name_sym)
-          @_dynamic_attributes[key_name_sym]
-        elsif key = keys[key_name.to_s]
+        if key = keys[key_name.to_s]
           if key.ivar && instance_variable_defined?(key.ivar)
             value = instance_variable_get(key.ivar)
           else
             if key.ivar
               instance_variable_set key.ivar, key.get(nil)
-            else
-              @_dynamic_attributes[key_name_sym] = key.get(nil)
             end
           end
         end
@@ -233,7 +229,6 @@ module MongoMapper
       def init_ivars
         @__mm_keys = self.class.keys                                # Not dumpable
         @__mm_default_keys = @__mm_keys.values.select(&:default?)   # Not dumpable
-        @_dynamic_attributes = {}                                      # Dumpable
       end
 
       def load_from_database(attrs, with_cast = false)
@@ -256,19 +251,13 @@ module MongoMapper
       end
 
       def internal_write_key(name, value, cast = true)
-        key         = @__mm_keys[name] || dynamic_key(name)
+        key         = @__mm_keys[name]
         as_mongo    = cast ? key.set(value) : value
         as_typecast = key.get(as_mongo)
         if key.ivar
           instance_variable_set key.ivar, as_typecast
-        else
-          @_dynamic_attributes[key.name.to_sym] = as_typecast
         end
         value
-      end
-
-      def dynamic_key(name)
-        self.class.key(name, :__dynamic => true)
       end
 
       def initialize_default_values(except = {})
