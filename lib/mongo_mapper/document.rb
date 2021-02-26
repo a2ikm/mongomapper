@@ -30,7 +30,6 @@ module MongoMapper
     include Plugins::Scopes
     include Plugins::Serialization
     include Plugins::Stats
-    include Plugins::Timestamps
 
     included do
       extend Plugins

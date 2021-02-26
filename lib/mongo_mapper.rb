@@ -53,7 +53,6 @@ module MongoMapper
     autoload :Serialization,      'mongo_mapper/plugins/serialization'
     autoload :Stats,              'mongo_mapper/plugins/stats'
     autoload :StrongParameters,   'mongo_mapper/plugins/strong_parameters'
-    autoload :Timestamps,         'mongo_mapper/plugins/timestamps'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
