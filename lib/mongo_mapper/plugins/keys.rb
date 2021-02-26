@@ -92,9 +92,7 @@ module MongoMapper
         key         = self.class.keys[name]
         as_mongo    = true ? key.set(value) : value
         as_typecast = key.get(as_mongo)
-        if key.ivar
-          instance_variable_set key.ivar, as_typecast
-        end
+        instance_variable_set key.ivar, as_typecast
         value
       end
     end
