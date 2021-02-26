@@ -45,7 +45,6 @@ module MongoMapper
     autoload :Pagination,         'mongo_mapper/plugins/pagination'
     autoload :Persistence,        'mongo_mapper/plugins/persistence'
     autoload :Protected,          'mongo_mapper/plugins/protected'
-    autoload :Querying,           'mongo_mapper/plugins/querying'
 
     module Associations
       autoload :Base,                         'mongo_mapper/plugins/associations/base'
