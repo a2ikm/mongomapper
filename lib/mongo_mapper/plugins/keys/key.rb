@@ -13,10 +13,6 @@ module MongoMapper
           @ivar = :"@#{name}"
         end
 
-        def ==(other)
-          @name == other.name && @type == other.type
-        end
-
         def get(value)
           value = type ? type.from_mongo(value) : value
 
