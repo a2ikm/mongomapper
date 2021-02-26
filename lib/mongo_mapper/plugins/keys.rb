@@ -19,10 +19,6 @@ module MongoMapper
         def key?(key)
           keys.key? key.to_s
         end
-
-        def from_mongo(value)
-          value && (value.instance_of?(self) ? value : load(value))
-        end
       end
 
       def initialize(attrs={})
