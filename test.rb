@@ -1,6 +1,6 @@
 require "bundler/inline"
 
-gemfile(true) do
+gemfile(false) do
   source "https://rubygems.org"
   gemspec :path => './'
   gem "rails", "~> #{ENV.fetch("RAILS_VERSION")}"
