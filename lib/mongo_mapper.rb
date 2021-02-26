@@ -33,7 +33,6 @@ module MongoMapper
     autoload :DynamicQuerying,    'mongo_mapper/plugins/dynamic_querying'
     autoload :Dumpable,           'mongo_mapper/plugins/dumpable'
     autoload :EmbeddedDocument,   'mongo_mapper/plugins/embedded_document'
-    autoload :Equality,           'mongo_mapper/plugins/equality'
     autoload :Keys,               'mongo_mapper/plugins/keys'
 
     module Associations
