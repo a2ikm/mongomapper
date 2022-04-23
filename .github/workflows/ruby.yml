@@ -20,6 +20,7 @@ jobs:
           - 2.7.6
           - 3.0.4
           - 3.1.2
+          - 3.2.0-preview1
         gemfile:
           - gemfiles/rails5_0.gemfile
           - gemfiles/rails5_1.gemfile
@@ -51,6 +52,12 @@ jobs:
           - ruby-version: 3.1.2
             gemfile: gemfiles/rails5_1.gemfile
           - ruby-version: 3.1.2
+            gemfile: gemfiles/rails5_2.gemfile
+          - ruby-version: 3.2.0-preview1
+            gemfile: gemfiles/rails5_0.gemfile
+          - ruby-version: 3.2.0-preview1
+            gemfile: gemfiles/rails5_1.gemfile
+          - ruby-version: 3.2.0-preview1
             gemfile: gemfiles/rails5_2.gemfile
     env:
       JRUBY_OPTS: "--1.9"
