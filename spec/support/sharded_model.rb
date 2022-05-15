@@ -19,7 +19,7 @@ if ENV["ENABLE_SHARDING"]
     shardCollection: [database.name, ShardedModel.collection.name].join("."),
     key: {
       first_name: "hashed",
-      last_name: "hashed",
+      last_name: "1",
     },
   )
 end
