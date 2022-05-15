@@ -15,7 +15,7 @@ if ENV["ENABLE_SHARDING"]
 
   # https://www.mongodb.com/docs/manual/reference/command/shardCollection/#mongodb-dbcommand-dbcmd.shardCollection
   # Note: this command automatically creates the index for the empty collection.
-  database.command(
+  client.use(:admin).command(
     shardCollection: [database.name, ShardedModel.collection.name].join("."),
     key: {
       first_name: "hashed",
