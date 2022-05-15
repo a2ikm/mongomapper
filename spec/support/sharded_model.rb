@@ -14,11 +14,12 @@ if ENV["ENABLE_SHARDING"]
   client.use(:admin).command(enableSharding: database.name)
 
   # https://www.mongodb.com/docs/manual/reference/command/shardCollection/#mongodb-dbcommand-dbcmd.shardCollection
-  # Note: this command automatically creates the index for the empty collection.
+  # Note 1: this command automatically creates the index for the empty collection
+  # Note 2: shard key can contain at most one 'hashed' field, and/or multiple numerical fields set to a value of 1
   client.use(:admin).command(
     shardCollection: [database.name, ShardedModel.collection.name].join("."),
     key: {
-      first_name: "hashed",
+      first_name: "1",
       last_name: "1",
     },
   )
