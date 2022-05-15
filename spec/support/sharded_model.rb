@@ -19,8 +19,8 @@ if ENV["ENABLE_SHARDING"]
   client.use(:admin).command(
     shardCollection: [database.name, ShardedModel.collection.name].join("."),
     key: {
-      first_name: "1",
-      last_name: "1",
+      first_name: "hashed",
+      last_name: 1,
     },
   )
 end
