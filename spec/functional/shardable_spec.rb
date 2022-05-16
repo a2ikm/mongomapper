@@ -1,33 +1,33 @@
 require 'spec_helper'
 
 describe 'Shardable' do
-  describe 'shard_key_fields' do
-    it 'returns declared field names' do
-      ShardedModel.shard_key_fields.should == ['first_name']
-    end
-  end
+  # describe 'shard_key_fields' do
+  #   it 'returns declared field names' do
+  #     ShardedModel.shard_key_fields.should == ['first_name']
+  #   end
+  # end
 
-  describe 'shard_key_filter' do
-    context 'new record' do
-      let(:document) { ShardedModel.new(first_name: 'John', last_name: 'Smith') }
+  # describe 'shard_key_filter' do
+  #   context 'new record' do
+  #     let(:document) { ShardedModel.new(first_name: 'John', last_name: 'Smith') }
 
-      it 'returns current values' do
-        document.shard_key_filter.should == { 'first_name' => 'John' }
-      end
-    end
+  #     it 'returns current values' do
+  #       document.shard_key_filter.should == { 'first_name' => 'John' }
+  #     end
+  #   end
 
-    context 'persisted record' do
-      let(:document) { ShardedModel.create!(first_name: 'John', last_name: 'Smith') }
+  #   context 'persisted record' do
+  #     let(:document) { ShardedModel.create!(first_name: 'John', last_name: 'Smith') }
 
-      before do
-        document.first_name = 'William'
-      end
+  #     before do
+  #       document.first_name = 'William'
+  #     end
 
-      it 'returns persisted values' do
-        document.shard_key_filter.should == { 'first_name' => 'John' }
-      end
-    end
-  end
+  #     it 'returns persisted values' do
+  #       document.shard_key_filter.should == { 'first_name' => 'John' }
+  #     end
+  #   end
+  # end
 
   context 'creating new document' do
     let(:document) { ShardedModel.new(first_name: 'John', last_name: 'Smith') }

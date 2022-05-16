@@ -3,7 +3,7 @@ class ShardedModel
 
   key :first_name, String
   key :last_name, String
-  shard_key :first_name
+  # shard_key :first_name
 end
 
 if ENV.fetch("ENABLE_SHARDING", "0") == "1"
