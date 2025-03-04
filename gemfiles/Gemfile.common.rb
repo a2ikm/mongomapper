@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'rake'
 gem 'multi_json', '~> 1.2'
 gem 'base64'
+gem 'mutex_m'
 
 if RUBY_PLATFORM != "java"
   gem 'coveralls', :require => false
