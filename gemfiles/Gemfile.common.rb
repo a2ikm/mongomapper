@@ -4,6 +4,7 @@ gem 'rake'
 gem 'multi_json', '~> 1.2'
 gem 'base64'
 gem 'mutex_m'
+gem 'drb'
 
 if RUBY_PLATFORM != "java"
   gem 'coveralls', :require => false
