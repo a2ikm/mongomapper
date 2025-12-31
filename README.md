@@ -30,7 +30,7 @@ work some more on the project, send an email to Scott Taylor
 
 MongoMapper is tested against:
 
-- MRI 2.4 - 3.4
+- MRI 2.4 - 4.0
 - JRuby (Versions with 3.1 compatibility)
 
 Additionally, MongoMapper is tested against:
