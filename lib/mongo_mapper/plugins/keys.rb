@@ -1,13 +1,13 @@
 # encoding: UTF-8
 require 'mongo_mapper/plugins/keys/key'
 require 'mongo_mapper/plugins/keys/static'
+require 'mongo_mapper/plugins/keys/accessor_generator'
+require 'mongo_mapper/plugins/keys/validation_builder'
 
 module MongoMapper
   module Plugins
     module Keys
       extend ActiveSupport::Concern
-
-      IS_RUBY_1_9 = method(:const_defined?).arity == 1
 
       included do
         extend ActiveSupport::DescendantsTracker
@@ -61,7 +61,7 @@ module MongoMapper
             create_accessors_for(key) if key.valid_ruby_name? && !key.reserved_name?
             create_key_in_descendants(*args)
             create_indexes_for(key)
-            create_validations_for(key)
+            ValidationBuilder.new(self).build(key)
             @dynamic_keys = @defined_keys = @unaliased_keys = @object_id_keys = nil
           end
         end
@@ -125,60 +125,8 @@ module MongoMapper
 
       private
 
-        def key_accessors_module_defined?
-          # :nocov:
-          if IS_RUBY_1_9
-            const_defined?('MongoMapperKeys')
-          else
-            const_defined?('MongoMapperKeys', false)
-          end
-          # :nocov:
-        end
-
-        def accessors_module
-          if key_accessors_module_defined?
-            const_get 'MongoMapperKeys'
-          else
-            const_set 'MongoMapperKeys', Module.new
-          end
-        end
-
-        def create_accessors_for(key)
-          if key.read_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}
-                read_key(:#{key.name})
-              end
-
-              def #{key.name}_before_type_cast
-                read_key_before_type_cast(:#{key.name})
-              end
-            end_eval
-          end
-
-          if key.write_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}=(value)
-                write_key(:#{key.name}, value)
-              end
-            end_eval
-          end
-
-          if key.predicate_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}?
-                read_key(:#{key.name}).present?
-              end
-            end_eval
-          end
-
-          if block_given?
-            accessors_module.module_eval do
-              yield
-            end
-          end
-
-          include accessors_module
+        def create_accessors_for(key, &block)
+          AccessorGenerator.new(self).generate(key, &block)
         end
 
         def create_key_in_descendants(*args)
@@ -193,51 +141,6 @@ module MongoMapper
           if key.options[:index] && !key.embeddable?
             warn "[DEPRECATION] :index option when defining key #{key.name.inspect} is deprecated. Put indexes in `db/indexes.rb`"
             ensure_index key.name
-          end
-        end
-
-        def create_validations_for(key)
-          attribute = key.name.to_sym
-
-          if key.options[:required]
-            if key.type == Boolean
-              validates_inclusion_of attribute, :in => [true, false]
-            else
-              validates_presence_of(attribute)
-            end
-          end
-
-          if key.options[:unique]
-            validates_uniqueness_of(attribute)
-          end
-
-          if key.options[:numeric]
-            number_options = key.type == Integer ? {:only_integer => true} : {}
-            validates_numericality_of(attribute, number_options)
-          end
-
-          if key.options[:format]
-            validates_format_of(attribute, :with => key.options[:format])
-          end
-
-          if key.options[:in]
-            validates_inclusion_of(attribute, :in => key.options[:in])
-          end
-
-          if key.options[:not_in]
-            validates_exclusion_of(attribute, :in => key.options[:not_in])
-          end
-
-          if key.options[:length]
-            length_options = case key.options[:length]
-            when Integer
-              {:minimum => 0, :maximum => key.options[:length]}
-            when Range
-              {:within => key.options[:length]}
-            when Hash
-              key.options[:length]
-            end
-            validates_length_of(attribute, length_options)
           end
         end
 
