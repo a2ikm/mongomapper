@@ -2,6 +2,7 @@
 require 'mongo_mapper/plugins/keys/key'
 require 'mongo_mapper/plugins/keys/static'
 require 'mongo_mapper/plugins/keys/accessor_generator'
+require 'mongo_mapper/plugins/keys/validation_builder'
 
 module MongoMapper
   module Plugins
@@ -60,7 +61,7 @@ module MongoMapper
             create_accessors_for(key) if key.valid_ruby_name? && !key.reserved_name?
             create_key_in_descendants(*args)
             create_indexes_for(key)
-            create_validations_for(key)
+            ValidationBuilder.new(self).build(key)
             @dynamic_keys = @defined_keys = @unaliased_keys = @object_id_keys = nil
           end
         end
@@ -140,51 +141,6 @@ module MongoMapper
           if key.options[:index] && !key.embeddable?
             warn "[DEPRECATION] :index option when defining key #{key.name.inspect} is deprecated. Put indexes in `db/indexes.rb`"
             ensure_index key.name
-          end
-        end
-
-        def create_validations_for(key)
-          attribute = key.name.to_sym
-
-          if key.options[:required]
-            if key.type == Boolean
-              validates_inclusion_of attribute, :in => [true, false]
-            else
-              validates_presence_of(attribute)
-            end
-          end
-
-          if key.options[:unique]
-            validates_uniqueness_of(attribute)
-          end
-
-          if key.options[:numeric]
-            number_options = key.type == Integer ? {:only_integer => true} : {}
-            validates_numericality_of(attribute, number_options)
-          end
-
-          if key.options[:format]
-            validates_format_of(attribute, :with => key.options[:format])
-          end
-
-          if key.options[:in]
-            validates_inclusion_of(attribute, :in => key.options[:in])
-          end
-
-          if key.options[:not_in]
-            validates_exclusion_of(attribute, :in => key.options[:not_in])
-          end
-
-          if key.options[:length]
-            length_options = case key.options[:length]
-            when Integer
-              {:minimum => 0, :maximum => key.options[:length]}
-            when Range
-              {:within => key.options[:length]}
-            when Hash
-              key.options[:length]
-            end
-            validates_length_of(attribute, length_options)
           end
         end
 
