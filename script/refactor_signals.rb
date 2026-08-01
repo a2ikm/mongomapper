@@ -6,7 +6,7 @@
 #   * fan_in / fan_out per file (and fan_in * fan_out as a "god object" score)
 #   * strongly connected components of size >= 2 (circular dependencies)
 #   * total line count per file ("files you dread opening")
-#   * deep method chains (Law of Demeter / train-wreck violations)
+#   * churn: how many of the last N commits touched the file
 #
 # Why constant-based instead of scanning require/require_relative lines:
 # MongoMapper mixes `require`, `require_relative` and `autoload` with
@@ -26,16 +26,20 @@ require "prism"
 require "pathname"
 require "tsort"
 require "json"
+require "set"
 
 LIB = Pathname.new("lib")
-DEMETER_MIN_DEPTH = 3 # a.b.c.d and deeper counts as a train wreck
+
+# Churn is measured over the last N commits (not all history) to keep the git
+# scan fast; override with CHURN_COMMITS. The CI checkout must fetch at least
+# this many commits (see fetch-depth in the workflow).
+CHURN_COMMITS = Integer(ENV.fetch("CHURN_COMMITS", "200"))
 
 files = Dir.glob("lib/**/*.rb").sort
 
 const_to_file = {} # "MongoMapper::Plugins::Keys" => "lib/mongo_mapper/plugins/keys.rb"
 file_refs = Hash.new { |h, k| h[k] = [] } # file => [[const_name, namespace_stack], ...]
 file_lines = {}
-demeter = []
 
 # Render a ConstantReadNode / ConstantPathNode as a dotted string, e.g.
 # "Plugins::Keys". Returns nil for dynamic paths we can't statically resolve.
@@ -47,30 +51,6 @@ def const_name(node)
     parent = node.parent ? const_name(node.parent) : nil
     [parent, node.name.to_s].compact.join("::")
   end
-end
-
-# A "navigational" send is a dotted call to a word-named method, e.g. `a.b`.
-# Operators (`+`, `==`), index (`[]`) and implicit-self calls don't count as
-# Demeter navigation, so we exclude them to avoid false train-wreck reports.
-def navigational?(node)
-  return false unless node.is_a?(Prism::CallNode)
-  return false if node.call_operator_loc.nil? # operator or implicit-self call
-
-  node.name.to_s.match?(/\A[A-Za-z_]\w*[?!]?\z/)
-end
-
-# Length of a trailing chain of navigational sends, e.g. `a.b.c.d` => 3.
-# Used to flag Law of Demeter violations.
-def chain_depth(node)
-  return 0 unless navigational?(node)
-
-  depth = 1
-  cur = node.receiver
-  while navigational?(cur)
-    depth += 1
-    cur = cur.receiver
-  end
-  depth
 end
 
 files.each do |file|
@@ -108,15 +88,6 @@ files.each do |file|
           resolved = (LIB + "#{path.unescaped}.rb").cleanpath.to_s
           const_to_file[full] = resolved if File.exist?(resolved)
         end
-      end
-
-      if (d = chain_depth(node)) >= DEMETER_MIN_DEPTH
-        demeter << {
-          "file" => file,
-          "line" => node.location.start_line,
-          "depth" => d,
-          "snippet" => node.slice.gsub(/\s+/, " ")[0, 100],
-        }
       end
 
       node.compact_child_nodes.each { |c| walk.call(c) }
@@ -194,6 +165,17 @@ end
 graph = Graph.new(files, edges)
 cycles = graph.each_strongly_connected_component.select { |c| c.size >= 2 }
 
+# Churn: number of the last CHURN_COMMITS commits that touched each file.
+# `--name-only --format=` lists just the changed paths; blank lines separate
+# commits. Counts are per current lib file (renamed/deleted paths are ignored).
+churn = Hash.new(0)
+lib_files = files.to_set
+git_log = `git log -n #{CHURN_COMMITS} --name-only --format= -- lib 2>/dev/null`
+git_log.each_line do |line|
+  path = line.strip
+  churn[path] += 1 if lib_files.include?(path)
+end
+
 files_out = {}
 files.each do |file|
   fi = fan_in[file].uniq.size
@@ -203,19 +185,13 @@ files.each do |file|
     "fan_in" => fi,
     "fan_out" => fo,
     "score" => fi * fo,
+    "churn" => churn[file],
   }
 end
 
-# A deeper chain visits its inner sub-chains too; keep only the deepest per
-# source line so a single train wreck is reported once.
-demeter = demeter
-  .group_by { |d| [d["file"], d["line"]] }
-  .map { |_, group| group.max_by { |d| d["depth"] } }
-demeter.sort_by! { |d| -d["depth"] }
-
 puts JSON.pretty_generate(
+  "churn_commits" => CHURN_COMMITS,
   "files" => files_out,
   "cycles" => cycles,
-  "demeter" => demeter,
   "edges" => edges.uniq,
 )

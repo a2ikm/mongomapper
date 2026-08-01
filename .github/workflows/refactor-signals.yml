@@ -19,6 +19,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v4
+        with:
+          # Churn is computed from the last CHURN_COMMITS commits (default 200),
+          # so fetch enough history rather than the default shallow clone.
+          fetch-depth: 300
 
       # The analysis runs on a modern Ruby (for Prism + a recent RuboCop) and is
       # intentionally decoupled from the gem's own supported range (2.4–4.0) and

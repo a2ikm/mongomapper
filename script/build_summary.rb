@@ -64,32 +64,43 @@ abc_by_file = abc.group_by { |r| r[:file] }.transform_values { |rs| rs.first[:va
 # --- Dependency-graph signals ----------------------------------------------
 files = deps["files"] || {}
 cycles = deps["cycles"] || []
-demeter = deps["demeter"] || []
+churn_commits = deps["churn_commits"]
 
 by_lines = files.sort_by { |_, v| -v["lines"] }
 by_coupling = files.sort_by { |_, v| -v["score"] }
+by_churn = files.sort_by { |_, v| -(v["churn"] || 0) }
 
 # --- Combined hotspot ranking ----------------------------------------------
-# Normalize each signal to 0..1 by its max, then sum. Missing signals count 0.
+# "Structural badness" is the normalized sum of intrinsic complexity (file
+# length, peak ABC) and centrality (fan-in×fan-out). We then modulate it by
+# churn, because a hotspot is complexity that actually changes often
+# (badness × churn). A CHURN_FLOOR keeps complex-but-stable files visible
+# rather than zeroing them, and makes the ranking degrade gracefully to the
+# pure-complexity order when churn data is absent (e.g. a shallow checkout).
+CHURN_FLOOR = 0.25
+
 max_lines = files.map { |_, v| v["lines"] }.max.to_f
 max_coupling = files.map { |_, v| v["score"] }.max.to_f
+max_churn = files.map { |_, v| v["churn"] || 0 }.max.to_f
 max_abc = abc_by_file.values.max.to_f
 
 norm = lambda { |value, max| max.positive? ? value / max : 0.0 }
 
 combined = files.map do |path, v|
-  score =
+  badness =
     norm.call(v["lines"], max_lines) +
     norm.call(v["score"], max_coupling) +
     norm.call(abc_by_file[path].to_f, max_abc)
+  churn_factor = CHURN_FLOOR + (1.0 - CHURN_FLOOR) * norm.call(v["churn"] || 0, max_churn)
   {
     file: path,
-    score: score,
+    score: badness * churn_factor,
     lines: v["lines"],
     coupling: v["score"],
     fan_in: v["fan_in"],
     fan_out: v["fan_out"],
     abc: abc_by_file[path],
+    churn: v["churn"] || 0,
   }
 end
 combined.sort_by! { |r| -r[:score] }
@@ -104,14 +115,15 @@ out << "## 🔍 Refactor signals\n\n"
 out << "Ranking of likely refactor hotspots. Signals are advisory only — nothing here fails the build.\n\n"
 
 out << "### 🏆 Top hotspots (combined score)\n\n"
-out << "Normalized sum of file length, fan-in×fan-out and peak ABC size.\n\n"
-out << "| # | File | Score | Lines | fan-in×out | Peak ABC |\n"
-out << "|---|------|------:|------:|-----------:|---------:|\n"
+churn_note = churn_commits ? " over the last #{churn_commits} commits" : ""
+out << "Structural badness (file length + fan-in×fan-out + peak ABC), modulated by churn#{churn_note}.\n\n"
+out << "| # | File | Score | Lines | fan-in×out | Peak ABC | Churn |\n"
+out << "|---|------|------:|------:|-----------:|---------:|------:|\n"
 combined.first(TOP_N).each_with_index do |r, i|
   out << format(
-    "| %d | `%s` | %.2f | %d | %d (%d×%d) | %s |\n",
+    "| %d | `%s` | %.2f | %d | %d (%d×%d) | %s | %d |\n",
     i + 1, short(r[:file]), r[:score], r[:lines], r[:coupling], r[:fan_in], r[:fan_out],
-    r[:abc] ? format("%.1f", r[:abc]) : "–"
+    r[:abc] ? format("%.1f", r[:abc]) : "–", r[:churn]
   )
 end
 
@@ -154,12 +166,15 @@ unless cycles.empty?
   out << "\n"
 end
 
-unless demeter.empty?
-  out << "#### 🚂 Deep method chains (Law of Demeter)\n\n"
-  out << "| Depth | Location | Snippet |\n|---:|---|---|\n"
-  demeter.first(TOP_N).each do |d|
-    snippet = d["snippet"].to_s.gsub("|", "\\|")
-    out << format("| %d | `%s:%d` | `%s` |\n", d["depth"], short(d["file"]), d["line"], snippet)
+if by_churn.any? { |_, v| (v["churn"] || 0).positive? }
+  label = churn_commits ? "last #{churn_commits} commits" : "recent commits"
+  out << "#### 🔥 Most-churned files (#{label})\n\n"
+  out << "Frequently changed on its own means little — read alongside complexity above.\n\n"
+  out << "| File | Churn |\n|---|---:|\n"
+  by_churn.first(TOP_N).each do |path, v|
+    next unless (v["churn"] || 0).positive?
+
+    out << format("| `%s` | %d |\n", short(path), v["churn"])
   end
   out << "\n"
 end
