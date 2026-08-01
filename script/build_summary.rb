@@ -16,11 +16,19 @@
 
 require "json"
 
-rubocop_path, deps_path = ARGV
-abort "usage: build_summary.rb <rubocop.json> <deps.json>" unless rubocop_path && deps_path
+rubocop_path, deps_path, mixins_path = ARGV
+abort "usage: build_summary.rb <rubocop.json> <deps.json> [mixins.json]" unless rubocop_path && deps_path
 
 rubocop = JSON.parse(File.read(rubocop_path))
 deps = JSON.parse(File.read(deps_path))
+# Optional: the runtime mixin dump (mixin_dump.rb). Absent (or unparseable, if
+# the boot step failed) => the mixin section is simply omitted.
+mixins =
+  begin
+    mixins_path && File.exist?(mixins_path) ? JSON.parse(File.read(mixins_path)) : nil
+  rescue JSON::ParserError
+    nil
+  end
 
 TOP_N = 10          # rows per table
 ANNOTATE_N = 5      # annotations per signal
@@ -180,6 +188,58 @@ if by_churn.any? { |_, v| (v["churn"] || 0).positive? }
 end
 
 out << "</details>\n"
+
+# --- Mixin composition & shared state (needs the runtime dump) --------------
+# Standard length metrics measure a file; splitting a god module into included
+# sub-modules games them without shrinking the composed object. Here we measure
+# the *composed* object instead: how many first-party mixins pile onto it, how
+# many methods that really is, and which instance variables are written by more
+# than one composed module (unresolved shared mutable state — the smell that
+# mixin-splitting hides).
+module_ivars = deps["module_ivars"] || {}
+
+# ivars written by >= 2 of the given modules => shared across that composition.
+shared_ivars = lambda do |modules|
+  writers = Hash.new { |h, k| h[k] = [] }
+  modules.each do |mod|
+    (module_ivars[mod] || []).each { |iv| writers[iv] << mod }
+  end
+  writers.select { |_, mods| mods.uniq.size >= 2 }
+    .sort_by { |_, mods| -mods.uniq.size }
+end
+
+if mixins && mixins["objects"]
+  out << "\n### 🧩 Mixin composition & shared state (runtime)\n\n"
+  out << "Measured on the *composed* class (mixins don't shrink this), not per file.\n\n"
+
+  out << "| Object | 1st-party mixins | Effective methods |\n"
+  out << "|---|---:|---:|\n"
+  mixins["objects"].each do |name, o|
+    mixin_count = o["instance_mixins"].size + o["class_mixins"].size
+    method_count = o["instance_methods_by_module"].values.sum + o["class_methods_by_module"].values.sum
+    out << format("| %s | %d | %d |\n", name, mixin_count, method_count)
+  end
+  out << "\n"
+
+  rows = []
+  mixins["objects"].each do |name, o|
+    { "instance" => o["instance_mixins"], "class" => o["class_mixins"] }.each do |scope, mods|
+      shared_ivars.call(mods).each do |ivar, writer_mods|
+        rows << [name, scope, ivar, writer_mods.uniq]
+      end
+    end
+  end
+
+  unless rows.empty?
+    out << "#### 🧬 Shared mutable state (ivars written by ≥2 composed modules)\n\n"
+    out << "| Object | Scope | ivar | Writers | Modules |\n|---|---|---|---:|---|\n"
+    rows.sort_by { |_, _, _, mods| -mods.size }.first(TOP_N).each do |name, scope, ivar, mods|
+      short_mods = mods.map { |m| m.sub(/\AMongoMapper::Plugins::/, "") }.join(", ")
+      out << format("| %s | %s | `%s` | %d | %s |\n", name, scope, ivar, mods.size, short_mods)
+    end
+    out << "\n"
+  end
+end
 
 summary_file = ENV["GITHUB_STEP_SUMMARY"]
 if summary_file && !summary_file.empty?

@@ -7,6 +7,8 @@
 #   * strongly connected components of size >= 2 (circular dependencies)
 #   * total line count per file ("files you dread opening")
 #   * churn: how many of the last N commits touched the file
+#   * per-module instance-variable writes (joined with the runtime mixin dump
+#     by build_summary.rb to find shared mutable state across composed modules)
 #
 # Why constant-based instead of scanning require/require_relative lines:
 # MongoMapper mixes `require`, `require_relative` and `autoload` with
@@ -40,6 +42,10 @@ files = Dir.glob("lib/**/*.rb").sort
 const_to_file = {} # "MongoMapper::Plugins::Keys" => "lib/mongo_mapper/plugins/keys.rb"
 file_refs = Hash.new { |h, k| h[k] = [] } # file => [[const_name, namespace_stack], ...]
 file_lines = {}
+# "MongoMapper::Plugins::Keys::ClassMethods" => #<Set: {"@keys", ...}>. Joined
+# with the runtime mixin dump (mixin_dump.rb) to find instance variables shared
+# by many modules composed onto the same object.
+module_ivars = Hash.new { |h, k| h[k] = Set.new }
 
 # Render a ConstantReadNode / ConstantPathNode as a dotted string, e.g.
 # "Plugins::Keys". Returns nil for dynamic paths we can't statically resolve.
@@ -90,6 +96,19 @@ files.each do |file|
         end
       end
 
+      # `instance_variable_set(:@keys, ...)` is a write we would otherwise miss.
+      if node.name == :instance_variable_set
+        arg = node.arguments&.arguments&.first
+        if arg.is_a?(Prism::SymbolNode) && !ns_stack.empty?
+          module_ivars[ns_stack.join("::")] << "@#{arg.unescaped.delete_prefix('@')}"
+        end
+      end
+
+      node.compact_child_nodes.each { |c| walk.call(c) }
+    when Prism::InstanceVariableWriteNode, Prism::InstanceVariableOrWriteNode,
+         Prism::InstanceVariableAndWriteNode, Prism::InstanceVariableOperatorWriteNode,
+         Prism::InstanceVariableTargetNode
+      module_ivars[ns_stack.join("::")] << node.name.to_s unless ns_stack.empty?
       node.compact_child_nodes.each { |c| walk.call(c) }
     when Prism::ConstantReadNode, Prism::ConstantPathNode
       name = const_name(node)
@@ -194,4 +213,5 @@ puts JSON.pretty_generate(
   "files" => files_out,
   "cycles" => cycles,
   "edges" => edges.uniq,
+  "module_ivars" => module_ivars.transform_values { |s| s.to_a.sort }.sort.to_h,
 )

@@ -24,13 +24,16 @@ jobs:
           # so fetch enough history rather than the default shallow clone.
           fetch-depth: 300
 
-      # The analysis runs on a modern Ruby (for Prism + a recent RuboCop) and is
-      # intentionally decoupled from the gem's own supported range (2.4–4.0) and
-      # from its Bundler environment, so it can't be perturbed by the test matrix.
+      # The static analysis (Prism + RuboCop) runs on a modern Ruby, decoupled
+      # from the gem's supported range (2.4–4.0). bundler-cache installs the
+      # gem's dependencies so the mixin dump can actually boot MongoMapper.
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.4"
+          bundler-cache: true
+        env:
+          BUNDLE_GEMFILE: gemfiles/rails8_0.gemfile
 
       - name: Install analysis tools
         run: gem install rubocop --no-document
@@ -43,5 +46,13 @@ jobs:
       - name: Build dependency graph
         run: ruby script/refactor_signals.rb > deps.json
 
+      # Boot MongoMapper and reflect on the composed classes. Non-fatal: if boot
+      # fails the report is still produced, just without the mixin section.
+      - name: Dump runtime mixin composition
+        continue-on-error: true
+        env:
+          BUNDLE_GEMFILE: gemfiles/rails8_0.gemfile
+        run: bundle exec ruby script/mixin_dump.rb > mixins.json
+
       - name: Build ranking, summary and annotations
-        run: ruby script/build_summary.rb rubocop.json deps.json
+        run: ruby script/build_summary.rb rubocop.json deps.json mixins.json
