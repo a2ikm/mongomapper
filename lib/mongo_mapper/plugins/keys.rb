@@ -1,13 +1,12 @@
 # encoding: UTF-8
 require 'mongo_mapper/plugins/keys/key'
 require 'mongo_mapper/plugins/keys/static'
+require 'mongo_mapper/plugins/keys/accessor_generator'
 
 module MongoMapper
   module Plugins
     module Keys
       extend ActiveSupport::Concern
-
-      IS_RUBY_1_9 = method(:const_defined?).arity == 1
 
       included do
         extend ActiveSupport::DescendantsTracker
@@ -125,60 +124,8 @@ module MongoMapper
 
       private
 
-        def key_accessors_module_defined?
-          # :nocov:
-          if IS_RUBY_1_9
-            const_defined?('MongoMapperKeys')
-          else
-            const_defined?('MongoMapperKeys', false)
-          end
-          # :nocov:
-        end
-
-        def accessors_module
-          if key_accessors_module_defined?
-            const_get 'MongoMapperKeys'
-          else
-            const_set 'MongoMapperKeys', Module.new
-          end
-        end
-
-        def create_accessors_for(key)
-          if key.read_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}
-                read_key(:#{key.name})
-              end
-
-              def #{key.name}_before_type_cast
-                read_key_before_type_cast(:#{key.name})
-              end
-            end_eval
-          end
-
-          if key.write_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}=(value)
-                write_key(:#{key.name}, value)
-              end
-            end_eval
-          end
-
-          if key.predicate_accessor?
-            accessors_module.module_eval(<<-end_eval, __FILE__, __LINE__+1)
-              def #{key.name}?
-                read_key(:#{key.name}).present?
-              end
-            end_eval
-          end
-
-          if block_given?
-            accessors_module.module_eval do
-              yield
-            end
-          end
-
-          include accessors_module
+        def create_accessors_for(key, &block)
+          AccessorGenerator.new(self).generate(key, &block)
         end
 
         def create_key_in_descendants(*args)
